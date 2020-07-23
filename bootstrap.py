@@ -11,44 +11,28 @@ class LavalinkBootstrap:
     """
     Class we're using to get Lavalink working on Heroku
     """
-    
-    def prepare_version_number(self):
-        
-        self._version_number = popen(
-            
-            """curl --silent "https://api.github.com/repos/Frederikam/Lavalink/releases/latest" | grep -Po '"tag_name": "\K.*?(?=")'"""
-          
-        ).read().strip()
 
     def __init__(self):
-
         """
         Doing important stuff here
         """
-        
-        self.prepare_version_number() # Fixes #1
-        
-        self.use_dev_lavalink = True if str(environ.get("USE_DEV_LAVALINK")).lower() not in ("no", "0", "n") else False
-        if self.use_dev_lavalink:
-            
-            print("[INFO] Using developer Lavalink version")
-        
-        self.download_command = f"curl -L https://ci.fredboat.com/repository/download/Lavalink_Build/8110:id/Lavalink.jar?guest=1 -o Lavalink.jar" if self.use_dev_lavalink else f"curl -L https://github.com/Frederikam/Lavalink/releases/download/{self._version_number}/Lavalink.jar -O"
-        print(f"[INFO] Download command: {self.download_command}")
-        
+
+        self.download_command = f"curl -o Lavalink.jar https://ci.fredboat.com/repository/download/Lavalink_Build/8231:id/Lavalink.jar?guest=1"
+        print(f"Download command: {self.download_command}")
+
         self.replace_port_command = 'sed -i "s|DYNAMICPORT|$PORT|" application.yml'
 
         self.replace_password_command = 'sed -i "s|DYNAMICPASSWORD|$PASSWORD|" application.yml'
         self.replace_password_command_no_password = 'sed -i "s|DYNAMICPASSWORD|youshallnotpass|" application.yml'
-        
+
         self._additional_options = environ.get(
             "ADDITIONAL_JAVA_OPTIONS"
-        ) # Heroku provides basic Java configuration based on dyno size, no need in limiting memory
-    
-        self.run_command = f"java -jar Lavalink.jar {self._additional_options}" # User-provided config, will override heroku's
+        )  # Heroku provides basic Java configuration based on dyno size, no need in limiting memory
+
+        # User-provided config, will override heroku's
+        self.run_command = f"java -jar Lavalink.jar {self._additional_options}"
 
     def replace_password_and_port(self):
-
         """
         Replacing password and port in application.yml
         """
@@ -58,7 +42,7 @@ class LavalinkBootstrap:
         )
 
         try:
-            
+
             system(
                 self.replace_port_command
             )
@@ -71,11 +55,11 @@ class LavalinkBootstrap:
                     and set the PASSWORD environment variable
                     """
                 )
-    
+
                 return system(
                     self.replace_password_command_no_password
                 )
-            
+
             system(
                 self.replace_password_command
             )
@@ -93,7 +77,6 @@ class LavalinkBootstrap:
             )
 
     def download(self):
-
         """
         Downloads latest release of Lavalink
         """
@@ -101,13 +84,13 @@ class LavalinkBootstrap:
         print(
             "[INFO] Downloading latest release of Lavalink..."
         )
-        
+
         try:
-            
+
             system(
                 self.download_command
             )
-        
+
         except BaseException as exc:
 
             print(
@@ -115,13 +98,12 @@ class LavalinkBootstrap:
             )
 
         else:
-        
+
             print(
                 "[INFO] Lavalink download OK"
             )
-    
-    def run(self):
 
+    def run(self):
         """
         Runs Lavalink instance
         """
@@ -138,12 +120,13 @@ class LavalinkBootstrap:
             system(
                 self.run_command
             )
-        
+
         except BaseException as exc:
 
             print(
                 f"[ERROR] Failed to start Lavalink. Info: {exc}"
             )
+
 
 if __name__ == "__main__":
 
