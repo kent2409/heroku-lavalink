@@ -22,7 +22,7 @@ class LavalinkBootstrap:
 
         self.replace_port_command = 'sed -i "s|DYNAMICPORT|$PORT|" application.yml'
 
-        self.replace_password_command = 'sed -i "s|DYNAMICPASSWORD|$PASSWORD|" application.yml'
+        self.replace_password_command = 'sed -i "s|DYNAMICPASSWORD|$youshallnotpass|" application.yml'
         self.replace_password_command_no_password = 'sed -i "s|DYNAMICPASSWORD|youshallnotpass|" application.yml'
 
         self._additional_options = environ.get(
