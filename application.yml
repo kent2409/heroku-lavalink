@@ -1,12 +1,12 @@
 server:
   port: 80
-  address: 171.238.148.100
+  address: 0.0.0.0
 spring:
   main:
     banner-mode: log
 lavalink:
   server:
-    password: "boulevard1"
+    password: "boulevard"
     sources:
       youtube: true
       bandcamp: true
